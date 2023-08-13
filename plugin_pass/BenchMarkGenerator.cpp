@@ -287,6 +287,13 @@ void get_function_sharememory_usage(const Module* mod)
     }
 }
 
+
+void go_wrong(const std::string& err, const llvm::Function& f)
+{
+    errs()<<f.getName()<<":   "<<err<<"\n";
+    exit(1);
+}
+
 PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnalysisManager &fam) {
 
     if(!sharemem_calculate_before)
@@ -312,17 +319,41 @@ PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnaly
 
     for(const auto* intrin: intrinsics)
     {
-        if(seen.find(intrin->getIntrinsicID()) == seen.end())
-            seen.insert(intrin->getIntrinsicID());
-        else
-        {
-            errs()<<"multiple intrin found\n";
-            exit(1);
-        }
-
         Intrinsic::ID id = intrin->getCalledFunction()->getIntrinsicID();
         MDNode* range = intrin->getMetadata("range");
         uint32_t upper_bound = get_upper_bound_of(range);
+
+        if(seen.find(id) == seen.end())
+            seen.insert(intrin->getIntrinsicID());
+        else
+        {
+            switch (id) {
+                case Intrinsic::nvvm_read_ptx_sreg_tid_x:
+                    if(upper_bound != thread_x)
+                        go_wrong("thread_x", f);
+                    break;
+                case Intrinsic::nvvm_read_ptx_sreg_tid_y:
+                    if(upper_bound != thread_y)
+                        go_wrong("thread_y", f);
+                    break;
+                case Intrinsic::nvvm_read_ptx_sreg_tid_z:
+                    if(upper_bound != thread_z)
+                        go_wrong("thread_z", f);
+                    break;
+                case Intrinsic::nvvm_read_ptx_sreg_ctaid_x:
+                    if(upper_bound != block_x)
+                        go_wrong("block_x", f);
+                    break;
+                case Intrinsic::nvvm_read_ptx_sreg_ctaid_y:
+                    if(upper_bound != block_y)
+                        go_wrong("block_y", f);
+                    break;
+                case Intrinsic::nvvm_read_ptx_sreg_ctaid_z:
+                    if(upper_bound != block_z)
+                        go_wrong("block_z", f);
+                    break;
+            }
+        }
 
         switch (id) {
             case Intrinsic::nvvm_read_ptx_sreg_tid_x:
@@ -338,19 +369,21 @@ PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnaly
                 block_x = upper_bound;
                 break;
             case Intrinsic::nvvm_read_ptx_sreg_ctaid_y:
-                block_x = upper_bound;
+                block_y = upper_bound;
                 break;
             case Intrinsic::nvvm_read_ptx_sreg_ctaid_z:
-                block_x = upper_bound;
+                block_z = upper_bound;
                 break;
         }
     }
+
     std::string module_name = get_module_name(f.getParent()->getName());
     std::string code = code_gen(f, module_name, bytes, share_memory_byte, block_x, block_y, block_z, thread_x, thread_y, thread_z);
     write_to_benchmark_file(f, code);
 
     return PreservedAnalyses::all();
 }
+
 
 
 extern "C" PassPluginLibraryInfo
