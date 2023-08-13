@@ -302,6 +302,10 @@ PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnaly
         get_function_sharememory_usage(f.getParent());
     }
 
+   if(f.hasInternalLinkage())
+        return PreservedAnalyses::all();
+
+
     uint64_t share_memory_byte = func_sharedmemory[f.getName().str()];
 
     std::vector<uint64_t> bytes;
