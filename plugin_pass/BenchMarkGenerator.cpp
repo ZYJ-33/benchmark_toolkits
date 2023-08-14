@@ -297,11 +297,13 @@ void go_wrong(const std::string& err, const llvm::Function& f)
 
 PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnalysisManager &fam) {
 
+    /*
     if(!sharemem_calculate_before)
     {
         sharemem_calculate_before = true;
         get_function_sharememory_usage(f.getParent());
     }
+     */
 
    if(f.hasInternalLinkage())
         return PreservedAnalyses::all();
@@ -383,7 +385,7 @@ PreservedAnalyses BenchMarkGenerator::run(llvm::Function &f, llvm::FunctionAnaly
     }
 
     std::string module_name = get_module_name(f.getParent()->getName());
-    std::string code = code_gen(f, module_name, bytes, share_memory_byte, block_x, block_y, block_z, thread_x, thread_y, thread_z);
+    std::string code = code_gen(f, module_name, bytes, 0, block_x, block_y, block_z, thread_x, thread_y, thread_z);
     write_to_benchmark_file(f, code);
 
     return PreservedAnalyses::all();
