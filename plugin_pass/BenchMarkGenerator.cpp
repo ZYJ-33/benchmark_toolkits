@@ -20,7 +20,8 @@ namespace{
                         "#include<stdio.h>\n"
                         "#include<bits/stdc++.h>\n"
                         "\n"
-                        "static void check(CUresult result, char const *const func,\n"
+                        "template <typename T>"
+                        "static void check(T result, char const *const func,\n"
                         "                  const char *const file, int const line) {\n"
                         "    if (result) {\n"
                         "        fprintf(stderr, \"CUDA error at %s:%d code=%d \\\"%s\\\" \\n\", file, line,\n"
@@ -29,7 +30,7 @@ namespace{
                         "    }\n"
                         "}\n"
                         "\n"
-                        "#define checkCudaDrvErrors(val) check((val), #val, __FILE__, __LINE__)\n"
+                        "#define checkCudaErrors(val) check((val), #val, __FILE__, __LINE__)\n"
                         "\n"
                         "int main(int argc, char** argv)\n"
                         "{\n"
@@ -39,22 +40,22 @@ namespace{
                         "    CUcontext ctx;\n"
                         "\n"
                         "    cudaEvent_t begin, end;\n"
-                        "    cudaEventCreate(&begin);\n"
-                        "    cudaEventCreate(&end);\n"
+                        "    checkCudaErrors(cudaEventCreate(&begin));\n"
+                        "    checkCudaErrors(cudaEventCreate(&end));\n"
                         "\n"
-                        "    checkCudaDrvErrors(cuInit(0));\n"
+                        "    checkCudaErrors(cuInit(0));\n"
                         "\n"
-                        "    checkCudaDrvErrors(cuDeviceGet(&device, 0));\n"
-                        "    checkCudaDrvErrors(cuCtxCreate(&ctx, 0, device));\n";
+                        "    checkCudaErrors(cuDeviceGet(&device, 0));\n"
+                        "    checkCudaErrors(cuCtxCreate(&ctx, 0, device));\n";
 
 
 
-    std::string part2 = "    cudaEventRecord(begin);\n"
-                        "    cuLaunchKernel(func, grid_x, grid_y, grid_z, thread_x, thread_y, thread_z, share_memory_byte,stream, paras, extra);\n"
-                        "    cudaEventRecord(end);\n"
-                        "    cudaEventSynchronize(end);\n"
+    std::string part2 = "    checkCudaErrors(cudaEventRecord(begin));\n"
+                        "    checkCudaErrors(cuLaunchKernel(func, grid_x, grid_y, grid_z, thread_x, thread_y, thread_z, share_memory_byte,stream, paras, extra));\n"
+                        "    checkCudaErrors(cudaEventRecord(end));\n"
+                        "    checkCudaErrors(cudaEventSynchronize(end));\n"
                         "    float time;\n"
-                        "    cudaEventElapsedTime(&time, begin, end);"
+                        "    checkCudaErrors(cudaEventElapsedTime(&time, begin, end));"
 
                         "\n"
                         "    std::cout << time << std::endl;\n"
@@ -84,13 +85,13 @@ namespace{
     {
         std::stringstream code;
         code << part1;
-        code << "    checkCudaDrvErrors(cuModuleLoad(&module, \""<<module_name<<".cubin\"));\n";
-        code << "    checkCudaDrvErrors(cuModuleGetFunction(&func, module, " << "\""<<f.getName().str()<<"\"));\n";
+        code << "    checkCudaErrors(cuModuleLoad(&module, \""<<module_name<<".cubin\"));\n";
+        code << "    checkCudaErrors(cuModuleGetFunction(&func, module, " << "\""<<f.getName().str()<<"\"));\n";
         for(int i=0; i<parameter_bytes.size(); i++)
             code << "    CUdeviceptr p"<<i<<";\n";
 
         for(int i=0; i<parameter_bytes.size(); i++)
-            code << "    checkCudaDrvErrors(" << "cuMemAlloc(" <<"&p"<<i <<", "<<parameter_bytes[i]<<")"  <<");\n";
+            code << "    checkCudaErrors(" << "cuMemAlloc(" <<"&p"<<i <<", "<<parameter_bytes[i]<<")"  <<");\n";
 
         code<<"    int grid_x = "<<grid_x<<";\n";
         code<<"    int grid_y = "<<grid_y<<";\n";
