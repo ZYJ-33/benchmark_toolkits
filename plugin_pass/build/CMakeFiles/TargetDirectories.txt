@@ -1,0 +1,13 @@
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/intrinsics_gen.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/omp_gen.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/acc_gen.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/RISCVTargetParserTableGen.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/BenchmarkGenerator.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/install-BenchmarkGenerator.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/install-BenchmarkGenerator-stripped.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/edit_cache.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/rebuild_cache.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/list_install_components.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/install.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/install/local.dir
+/home/wanghao44/zhengyujia/benchmark_toolkits/plugin_pass/build/CMakeFiles/install/strip.dir

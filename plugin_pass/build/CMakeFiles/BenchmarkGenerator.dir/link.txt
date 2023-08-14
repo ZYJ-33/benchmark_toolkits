@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -Wl,-rpath-link,  -Wl,--gc-sections -shared  -o BenchmarkGenerator.so CMakeFiles/BenchmarkGenerator.dir/BenchMarkGenerator.cpp.o   -L/home/wanghao44/zhengyujia/compiler/llvm-project-llvmorg-17.0.0-rc1/build/./lib  -Wl,-rpath,"\$ORIGIN/../lib:/home/wanghao44/zhengyujia/compiler/llvm-project-llvmorg-17.0.0-rc1/build/./lib:" 

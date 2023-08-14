@@ -39,8 +39,8 @@ namespace{
                         "    CUcontext ctx;\n"
                         "\n"
                         "    cudaEvent_t begin, end;\n"
-                        "    cudaEventCreate(&begin);\n"
-                        "    cudaEventCreate(&end);\n"
+                        "    checkCudaDrvErrors(cudaEventCreate(&begin));\n"
+                        "    checkCudaDrvErrors(cudaEventCreate(&end));\n"
                         "\n"
                         "    checkCudaDrvErrors(cuInit(0));\n"
                         "\n"
@@ -49,13 +49,12 @@ namespace{
 
 
 
-    std::string part2 = "    cudaEventRecord(begin);\n"
-                        "    cuLaunchKernel(func, grid_x, grid_y, grid_z, thread_x, thread_y, thread_z, share_memory_byte,stream, paras, extra);\n"
-                        "    cudaEventRecord(end);\n"
-                        "    cudaEventSynchronize(end);\n"
+    std::string part2 = "    checkCudaDrvErrors(cudaEventRecord(begin));\n"
+                        "    checkCudaDrvErrors(cuLaunchKernel(func, grid_x, grid_y, grid_z, thread_x, thread_y, thread_z, share_memory_byte,stream, paras, extra));\n"
+                        "    checkCudaDrvErrors(cudaEventRecord(end));\n"
+                        "    checkCudaDrvErrors(cudaEventSynchronize(end));\n"
                         "    float time;\n"
-                        "    cudaEventElapsedTime(&time, begin, end);"
-
+                        "    checkCudaDrvErrors(cudaEventElapsedTime(&time, begin, end));"
                         "\n"
                         "    std::cout << time << std::endl;\n"
                         "}";

@@ -17,12 +17,15 @@ def compile_benchmark(benchmark_files, excutables):
     for benchmark_file in benchmark_files:
         excutable_benchmark = benchmark_file[0: len(benchmark_file)-4]
         if not excutable_benchmark in excutables:
+            print("compiling " + excutable_benchmark)
+            subprocess.run(["echo", nvcc, "-ccbin", host_compiler, "-gencode", "arch=compute_86,code=sm_86","-I"+cuda_path+"/include" , "-o", benchmark_dir+'/'+ excutable_benchmark, benchmark_dir+'/'+ benchmark_file, "-L"+cuda_path+"/lib64/stubs", "-lcuda", "-lcudart_static"])
             subprocess.run([nvcc, "-ccbin", host_compiler, "-gencode", "arch=compute_86,code=sm_86","-I"+cuda_path+"/include" , "-o", benchmark_dir+'/'+ excutable_benchmark, benchmark_dir+'/'+ benchmark_file, "-L"+cuda_path+"/lib64/stubs", "-lcuda", "-lcudart_static"])
 
 def run_benchmark(benchmark_files):
     benchmark_runtime = {}
     for benchmark_file in benchmark_files:
         excutable_benchmark = benchmark_file[0: len(benchmark_file)-4]
+        print("running benchmark: "+excutable_benchmark)
         runtime = subprocess.check_output(["./" + excutable_benchmark], cwd=benchmark_dir)
         benchmark_runtime[excutable_benchmark] = runtime
     return benchmark_runtime

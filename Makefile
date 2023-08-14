@@ -18,7 +18,6 @@ $(MODULE_NAME).ptx: $(MODULE_LL)
 
 $(MODULE_NAME).cubin: $(MODULE_NAME).ptx
 	$(PTX_ASSMBLER) -arch=$(GPU_ARCH) $< -o $@
-	rm $<
 
 BenchmarkGenerator.so: 
 	cmake ./plugin_pass -B./plugin_pass/build -DLLVM_DIR=$(LLVM_DIR)
