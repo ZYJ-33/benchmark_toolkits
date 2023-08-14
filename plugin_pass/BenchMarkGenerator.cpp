@@ -39,9 +39,6 @@ namespace{
                         "    CUmodule module;\n"
                         "    CUcontext ctx;\n"
                         "\n"
-                        "    cudaEvent_t begin, end;\n"
-                        "    checkCudaErrors(cudaEventCreate(&begin));\n"
-                        "    checkCudaErrors(cudaEventCreate(&end));\n"
                         "\n"
                         "    checkCudaErrors(cuInit(0));\n"
                         "\n"
@@ -50,7 +47,10 @@ namespace{
 
 
 
-    std::string part2 = "    checkCudaErrors(cudaEventRecord(begin));\n"
+    std::string part2 = "    cudaEvent_t begin, end;\n"
+                        "    checkCudaErrors(cudaEventCreate(&begin));\n"
+                        "    checkCudaErrors(cudaEventCreate(&end));\n"
+                        "    checkCudaErrors(cudaEventRecord(begin));\n"
                         "    checkCudaErrors(cuLaunchKernel(func, grid_x, grid_y, grid_z, thread_x, thread_y, thread_z, share_memory_byte,stream, paras, extra));\n"
                         "    checkCudaErrors(cudaEventRecord(end));\n"
                         "    checkCudaErrors(cudaEventSynchronize(end));\n"
