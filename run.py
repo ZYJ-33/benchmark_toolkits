@@ -1,9 +1,7 @@
 import os
 import re
 import subprocess
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+from tabulate import tabulate 
 
 
 benchmark_dir = './benchmarks'
@@ -12,6 +10,8 @@ benchmark_pattern = r"\.cpp$"
 cuda_path = '/usr/local/cuda-11.4'
 host_compiler = 'g++'
 nvcc = cuda_path + '/bin/nvcc'
+
+headers = ["Operator", "RunningTime"]
 
 def compile_benchmark(benchmark_files, excutables):
     for benchmark_file in benchmark_files:
@@ -22,12 +22,12 @@ def compile_benchmark(benchmark_files, excutables):
             subprocess.run([nvcc, "-ccbin", host_compiler, "-gencode", "arch=compute_86,code=sm_86","-I"+cuda_path+"/include" , "-o", benchmark_dir+'/'+ excutable_benchmark, benchmark_dir+'/'+ benchmark_file, "-L"+cuda_path+"/lib64/stubs", "-lcuda", "-lcudart_static"])
 
 def run_benchmark(benchmark_files):
-    benchmark_runtime = {}
+    benchmark_runtime = []
     for benchmark_file in benchmark_files:
         excutable_benchmark = benchmark_file[0: len(benchmark_file)-4]
         print("running benchmark: "+excutable_benchmark)
         runtime = subprocess.check_output(["./" + excutable_benchmark], cwd=benchmark_dir)
-        benchmark_runtime[excutable_benchmark] = runtime
+        benchmark_runtime.append([excutable_benchmark, runtime])
     return benchmark_runtime
 
 def generate_graph_from_data(benchmark_runtimes):
@@ -40,6 +40,20 @@ def generate_graph_from_data(benchmark_runtimes):
     plt.ylabel('Clocks')
 
     plt.show()
+
+def write_to_file(path, content):
+    try:
+        with open(path, 'w') as file:
+            file.close()
+            import os
+            os.remove(path)
+
+    except FileNotFoundError:
+        pass
+
+    with open(path, 'w') as file:
+        file.write(content)
+
 
 def main():
     benchmark_files = []
@@ -56,7 +70,8 @@ def main():
 
     compile_benchmark(benchmark_files, excutables);
     benchmark_runtimes = run_benchmark(benchmark_files)
-    print(benchmark_runtimes)
+    table = tabulate(benchmark_runtimes, headers=headers, tablefmt="grid")
+    write_to_file('./benchmark', table)
     #generate_graph_from_data(benchmark_runtimes)
 
 if __name__ == "__main__":

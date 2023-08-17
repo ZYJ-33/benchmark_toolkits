@@ -12,12 +12,16 @@ PTX_COMPILER := llc
 GPU_ARCH := sm_86
 PTX_TYPE := nvptx64
 PTX_ASSMBLER := ptxas
+NVCC := nvcc
 
 $(MODULE_NAME).ptx: $(MODULE_LL)
 	$(PTX_COMPILER) -mcpu=$(GPU_ARCH)  -march=$(PTX_TYPE) $< -o $@
 
-$(MODULE_NAME).cubin: $(MODULE_NAME).ptx
-	$(PTX_ASSMBLER) -arch=$(GPU_ARCH) $< -o $@
+libdevice.10.ptx: libdevice.10.ll
+	$(PTX_COMPILER) -mcpu=$(GPU_ARCH)  -march=$(PTX_TYPE) $< -o $@
+
+$(MODULE_NAME).cubin: $(MODULE_NAME).ptx libdevice.10.ptx
+	$(NVCC) -arch=$(GPU_ARCH) -dlink -cubin $^ -o $@
 
 BenchmarkGenerator.so: 
 	cmake ./plugin_pass -B./plugin_pass/build -DLLVM_DIR=$(LLVM_DIR)
@@ -32,4 +36,4 @@ run: generate_benchmark
 	python3 ./run.py
 	
 clean:
-	rm runtime_test.o runtime_test
+	python3 ./clean.py
