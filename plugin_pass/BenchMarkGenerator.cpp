@@ -58,7 +58,7 @@ namespace{
                         "    checkCudaErrors(cudaEventElapsedTime(&time, begin, end));"
 
                         "\n"
-                        "    std::cout << time <<\" ms \" << std::endl;\n"
+                        "    std::cout << time << \" ms\" << std::endl;\n"
                         "}";
 
 
